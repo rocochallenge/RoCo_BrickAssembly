@@ -1,0 +1,86 @@
+[project]
+name = "rocobrick"
+version = "0.1.0"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "numpy==1.26.4",
+    "isaaclab==2.3.2.post1",
+    "isaacsim[all,extscache]==5.1.0",
+    "lerobot==0.4.4",
+    "huggingface_hub>=0.34.2,<0.36.0",
+    "torch==2.7.0",
+    "torchvision==0.22.0",
+    "torchaudio==2.7.0",
+    "bricksim[all]==0.1.0.dev570",
+    "chex==0.1.90",
+    "openpi",
+    "pin>=3.9.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+    "ty",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = true
+environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+override-dependencies = [
+    # Work around Isaac Sim's unconditional pywin32 dependency on non-Windows platforms.
+    "pywin32==306 ; sys_platform == 'win32'",
+    # LeRobot requires packaging>=24.2 while Isaac Lab pins packaging<24.
+    "packaging==24.2",
+    # Isaac Sim requires numpy 1.x.
+    "numpy==1.26.4",
+    # Isaac Sim pins filelock to 3.13.1; keep the simulator stack coherent.
+    "filelock==3.13.1",
+    # Keep on the released LeRobot package instead of openpi's git override.
+    "lerobot==0.4.4",
+    # Keep on its current torch stack.
+    "torch==2.7.0",
+]
+
+[tool.uv.sources]
+bricksim = { index = "bricksim" }
+lerobot = { index = "pypi-explicit" }
+openpi = { git = "https://github.com/Physical-Intelligence/openpi.git", rev = "a190e000bba78bb09b18dee1865c3b4302b071c9" }
+openpi-client = { git = "https://github.com/Physical-Intelligence/openpi.git", subdirectory = "packages/openpi-client", rev = "a190e000bba78bb09b18dee1865c3b4302b071c9" }
+
+[[tool.uv.index]]
+name = "pypi-explicit"
+url = "https://pypi.org/simple/"
+explicit = true
+
+[[tool.uv.index]]
+name = "bricksim"
+url = "https://dl.cloudsmith.io/public/bricksim/bricksim/python/simple/"
+
+[tool.ruff]
+# Keep the first Ruff rollout scoped to the package and tests so legacy
+# scripts can be cleaned up separately.
+force-exclude = true
+include = ["src/**/*.py", "tests/**/*.py"]
+src = ["src"]
+target-version = "py311"
+
+[tool.ruff.lint]
+# Use pycodestyle, Pyflakes, and pep8-naming, then add import sorting.
+select = ["E", "F", "N"]
+extend-select = ["I", "D", "DOC201", "TID251"]
+preview = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"typing.Any".msg = "Do not use Any. Use a concrete type, Protocol, object, or a local stub."
+"typing.cast".msg = "Do not use cast as a blanket escape hatch. Prefer a concrete Protocol or stub."
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rocobrick"]

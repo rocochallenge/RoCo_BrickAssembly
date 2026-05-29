@@ -1,0 +1,1 @@
+"""RoCoBrick package."""
