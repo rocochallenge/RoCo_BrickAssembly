@@ -150,8 +150,10 @@ def Xform "vega_1u" (
 
             def Camera "R_wristcam"
             {
-                float2 clippingRange = (0.01, 10000000)
-                float focalLength = 18.147562
+                float2 clippingRange = (0.01, 100)
+                float focalLength = 1.93
+                float horizontalAperture = 2.65
+                float verticalAperture = 1.49
                 float focusDistance = 400
                 token visibility = "invisible"
                 quatd xformOp:orient = (6.123233995736766e-17, 6.123233995736766e-17, 1, 6.123233995736766e-17)
@@ -260,8 +262,10 @@ def Xform "vega_1u" (
 
             def Camera "L_wristcam"
             {
-                float2 clippingRange = (0.01, 10000000)
-                float focalLength = 18.147562
+                float2 clippingRange = (0.01, 100)
+                float focalLength = 1.93
+                float horizontalAperture = 2.65
+                float verticalAperture = 1.49
                 float focusDistance = 400
                 token visibility = "invisible"
                 quatd xformOp:orient = (6.123233995736766e-17, -6.123233995736766e-17, -1, -6.123233995736766e-17)
@@ -605,9 +609,11 @@ def Xform "vega_1u" (
 
         def Camera "headcam"
         {
-            float2 clippingRange = (0.01, 10000000)
-            float focalLength = 2.12
-            float focusDistance = 100
+            float2 clippingRange = (0.01, 100)
+            float focalLength = 1.93
+            float horizontalAperture = 2.65
+            float verticalAperture = 1.49
+            float focusDistance = 400
             token visibility = "invisible"
             quatd xformOp:orient = (6.123233995736766e-17, 1, 0, 0)
             double3 xformOp:scale = (1, 1, 1)
