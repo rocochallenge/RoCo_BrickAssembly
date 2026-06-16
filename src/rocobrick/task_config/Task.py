@@ -37,16 +37,12 @@ class TaskConfig():
             task_fname = os.path.join(self.task_path, "structure_goal.json")
             
             task_graph_pre = load_json(pre_task_fname)
-            topology_pre = legolization_json_to_topology_json(task_graph_pre, 
-                                                              color=self.get_colors(task_graph_pre), 
-                                                              **baseplate_kwargs)
-
             task_graph = load_json(task_fname)
             topology = legolization_json_to_topology_json(task_graph, 
                                                           color=self.get_colors(task_graph), 
                                                           **baseplate_kwargs)
 
-            pre_placed_parts_config = self.find_pre_placed(topology_pre, topology)
+            pre_placed_parts_config = self.find_pre_placed(task_graph_pre, task_graph)
             
         elif(self.task_type == "2"): # Type 2 task
             task_fname = os.path.join(self.task_path, "structure.json")
@@ -87,17 +83,25 @@ class TaskConfig():
         self.to_placed_topology = to_place_topology
 
 
-    def find_pre_placed(self, topology_pre, topology):
+    def find_pre_placed(self, task_graph_pre, task_graph):
         """
-        Find the pre-placed parts by comparing the initial and goal topologies.
+        Find the pre-placed parts by comparing the initial and goal task graphs.
         """
-        pre_placed_parts = []
-        for part in topology['parts']:
-            for part_pre in topology_pre['parts']:
-                if part['id'] == part_pre['id']:
-                    pre_placed_parts.append(part_pre['id'])
+        pre_placed_parts = [0]
+        for k in task_graph.keys():
+            node = task_graph[k]
+            for k_pre in task_graph_pre.keys():
+                node_pre = task_graph_pre[k_pre]
+                if(self.identical_node(node, node_pre)):
+                    pre_placed_parts.append(int(k))
                     break
         return pre_placed_parts
+    
+    def identical_node(self, n1, n2):
+        for k in n1.keys():
+            if(n1[k] != n2[k]):
+                return False
+        return True
     
     def get_colors(self, task_graph):
         """
