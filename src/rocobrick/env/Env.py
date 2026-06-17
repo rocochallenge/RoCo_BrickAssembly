@@ -360,7 +360,16 @@ class Env():
             obs: a dictionary containing the robot's joint positions and camera images.
         """
         obs = {}
-        obs["joint_positions"] = self.robot.get_joint_positions()
+        output_joint_orders = ["Lift", "torso_flip",  
+                               "L_arm_j1", "L_arm_j2", "L_arm_j3", "L_arm_j4", "L_arm_j5", "L_arm_j6", "L_arm_j7", "L_gripper_joint", "L_gripper_joint_01",
+                               "R_arm_j1", "R_arm_j2", "R_arm_j3", "R_arm_j4", "R_arm_j5", "R_arm_j6", "R_arm_j7", "R_gripper_joint", "R_gripper_joint_01",
+                               "head_j1", "head_j2", "head_j3"]
+        q_raw = self.robot.get_joint_positions()
+        q_ordered = np.zeros(self.robot_pin.nq, dtype=np.float32)
+        for i, joint_name in enumerate(output_joint_orders):
+            if joint_name in self.robot.dof_names:
+                q_ordered[i] = q_raw[self.robot.dof_names.index(joint_name)]
+        obs["joint_positions"] = q_ordered
         obs["images"] = {}
         obs["images"]["head_rgb"] = self.cameras["Head_Camera"].get_rgb()
         obs["images"]["head_depth"] = self.cameras["Head_Camera"].get_depth()
